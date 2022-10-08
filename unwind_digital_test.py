@@ -62,8 +62,27 @@ class Table():
                 token.write(creds.to_json())
         print('Initial authentification is done')
 
+        try:
+                service = build('drive', 'v3', credentials=creds)
+
+                # Call the Drive v3 API
+                results = service.files().list(
+                    pageSize=10, fields="nextPageToken, files(id, name)").execute()
+                items = results.get('files', [])
+
+                if not items:
+                    print('No files found.')
+                    return
+                print('Files:')
+                for item in items:
+                    print(u'{0} ({1})'.format(item['name'], item['id']))
+            except HttpError as error:
+                # TODO(developer) - Handle errors from drive API.
+                print(f'An error occurred: {error}')
+
+
     
-    def download_file(self,):
+    def download_file(self):
         ''' creating function to download data from google drive'''
         google_file_id ='1abkOn29tonFO4-Up-5IAXzUEanYwNnW9QfC0Y1gQwUY'
         creds = None
