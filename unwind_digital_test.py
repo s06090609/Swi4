@@ -25,66 +25,19 @@ import numpy as np
 class Table():
     
     def __init__(self):
-        self.auth=self.first_authentification()
 
-
-        # periodicity_time=24*(60**2)
-        periodicity_time=3 # 24 hours in seconds
+        periodicity_time=24*(60**2) # 24 hours in seconds
         while True:
             self.FLE=self.download_file()
             self.df=self.convert_data()
             self.create_db_and_add_data()
-            time.sleep(periodicity_time)
 
+            time.sleep(periodicity_time) ### sleeping for 24 hours before re-running the script
 
-    def first_authentification(self):
-
-        self.SCOPES = ['https://www.googleapis.com/auth/spreadsheets','https://www.googleapis.com/auth/drive']
-
-        """Shows basic usage of the Drive v3 API.
-        Prints the names and ids of the first 10 files the user has access to.
-        """
-        creds = None
-        # The file token.json stores the user's access and refresh tokens, and is
-        # created automatically when the authorization flow completes for the first
-        # time.
-        if os.path.exists('token.json'):
-            creds = Credentials.from_authorized_user_file('token.json', self.SCOPES)
-        # If there are no (valid) credentials available, let the user log in.
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    'credentials.json', self.SCOPES)
-                creds = flow.run_local_server(port=0)
-            # Save the credentials for the next run
-            with open('token.json', 'w') as token:
-                token.write(creds.to_json())
-        print('Initial authentification is done')
-
-        try:
-            service = build('drive', 'v3', credentials=creds)
-
-            # Call the Drive v3 API
-            results = service.files().list(
-                pageSize=10, fields="nextPageToken, files(id, name)").execute()
-            items = results.get('files', [])
-
-            if not items:
-                print('No files found.')
-                return
-            print('Files:')
-            for item in items:
-                print(u'{0} ({1})'.format(item['name'], item['id']))
-        except HttpError as error:
-            # TODO(developer) - Handle errors from drive API.
-            print(f'An error occurred: {error}')
-
-
-    
     def download_file(self):
         ''' creating function to download data from google drive'''
+
+        self.SCOPES = ['https://www.googleapis.com/auth/spreadsheets','https://www.googleapis.com/auth/drive'] ## Scope
         google_file_id ='1abkOn29tonFO4-Up-5IAXzUEanYwNnW9QfC0Y1gQwUY'
         creds = None
 
@@ -121,11 +74,7 @@ class Table():
             while done is False:
                 status, done = downloader.next_chunk()
                 print(F'Download {int(status.progress() * 100)}.')
-            
 
-            
-            # time.sleep(5)
-            # download_file(real_file_id)
 
         except HttpError as error:
             print(F'An error occurred: {error}')
@@ -140,20 +89,20 @@ class Table():
         split_data=s.split('\t') ### splitting the data to get 
         cols=split_data[:4] ### pulling columns names from data
         cols[-1]='срок поставки' # creating additional clumn
-        df=pd.DataFrame(columns=cols)
+        df=pd.DataFrame(columns = cols)
 
         ''' rearanging columns and values in pandas data Frame format'''
 
         n_cols=len(cols)
         data_ind=0
-        for i in range(len(cols)-1):
-            df[f'{cols[i+1]}']=split_data[n_cols+data_ind::3]
-            data_ind+=1
+        for i in range(len(cols) - 1):
+            df[f'{cols[i + 1]}']=split_data[n_cols+data_ind:: 3]
+            data_ind += 1
         df['№']=(df.index+1).astype(str)
 
         ''' getting rid of \r\n#'''
         for i in range(len(df)):
-            df['срок поставки'].iloc[i]=df['срок поставки'].iloc[i][:10]
+            df['срок поставки'].iloc[i]=df['срок поставки'].iloc[i][: 10]
 
         ''' Pulling current rub/usd exchange rate'''
         data = requests.get('https://www.cbr-xml-daily.ru/daily_json.js').json()
@@ -174,7 +123,7 @@ class Table():
             database="unwind_digital_db",
                 user='postgres',
                 password='admin',
-                host='192.168.0.108', #'localhost', #
+                host='localhost', #alternative host for different local machines '192.168.0.108',
                 port= '5432'
             )
             conn.autocommit = True
@@ -199,19 +148,18 @@ class Table():
             cur.execute(create_script)
 
             insert_script=' INSERT INTO test ("№","заказ №", "стоимость,$", "срок поставки" ,"стоимость в руб") VALUES (%s, %s, %s, %s, %s)'
-            insert_values=list(map(tuple, self.df.values)) #df.iloc[1].values#df.iloc[0].astype(float)# #
+            insert_values=list(map(tuple, self.df.values)) 
 
             for record in insert_values:
                 cur.execute(insert_script,record)
-            print('Data upload is done')
-            # print('done2')
             conn.commit()
             cur.close()
+            print('Data upload is done')
         except Exception as error:
             print (error)
 
-# if __name__ == '__main__':
-#     FLE=download_file('1abkOn29tonFO4-Up-5IAXzUEanYwNnW9QfC0Y1gQwUY')
+if __name__ == '__main__':
+    Table()
     
-Table()
+
 
