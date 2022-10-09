@@ -19,8 +19,8 @@ import time
 from io import BytesIO
 import pandas as pd
 import numpy as np
-
-
+import telebot
+from datetime import date
 
 class Table():
     
@@ -30,6 +30,7 @@ class Table():
         while True:
             self.FLE=self.download_file()
             self.df=self.convert_data()
+            self.Telegram_bot()
             self.create_db_and_add_data()
 
             time.sleep(periodicity_time) ### sleeping for 24 hours before re-running the script
@@ -115,6 +116,21 @@ class Table():
         print('Data preparation is done')
         return df
 
+    def Telegram_bot(self):
+
+        ''' Creating bot to send message if any of the orders have expired by today'''
+        dates=pd.to_datetime(self.df['срок поставки'], format= '%d.%m.%Y')
+        today=date.today()
+        
+        self.df['Просрочено']=(pd.to_datetime(self.df['срок поставки'], format= '%d.%m.%Y')>pd.to_datetime(date.today()))+0.
+
+        if any(self.df['Просрочено'])!=0:
+            expired_items=self.df[self.df['Просрочено']!=0].copy()
+            expired_items=expired_items.loc[:, expired_items.columns != 'Просрочено']
+
+            bot =telebot.TeleBot('5610476153:AAGTgh4poVHd8q4iDrT5GvTKcvcHrceZBQ4')
+            bot.send_message(406709203, f' This items have expired \n {expired_items}')
+        self.df=self.df.loc[:, self.df.columns != 'Просрочено'].copy()
 
     
     def create_db_and_add_data(self):
