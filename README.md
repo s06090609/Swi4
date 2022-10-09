@@ -1,6 +1,6 @@
 # Unwind_Digital_test
 
-1)Download and unzip files in your preffered location ( The "Token.jso"n and "unwind_digital_test.py" MUST BE IN THE SAME FOLDER)
+1)Download and unzip files in your preffered location ( The "Token.jso"n and "unwind_digital_test.py" MUST BE IN THE SAME FOLDER) \n
 2)run the "unwind_digital_test.py"
 3)Each Stage of the Script will print message notifying of stage completion
 
