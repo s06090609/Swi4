@@ -174,7 +174,7 @@ class Table():
             database="unwind_digital_db",
                 user='postgres',
                 password='admin',
-                host='localhost',
+                host='192.168.0.108', #'localhost', #
                 port= '5432'
             )
             conn.autocommit = True
@@ -182,7 +182,7 @@ class Table():
             cur = conn.cursor()
             #Creating DataBase for Unwind Digital data
             try:
-                db= ''' CREATE database Unwind_digital_db ''';
+                db= ''' CREATE database Unwind_digital_db '''
                 cur.execute(db)
             except:
                 pass
