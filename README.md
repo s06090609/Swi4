@@ -1,11 +1,14 @@
 # Unwind_Digital_test
 
-1)Download and unzip files in your preffered location ( The "Token.jso"n and "unwind_digital_test.py" MUST BE IN THE SAME FOLDER) \n
+1)Download and unzip files in your preffered location ( The "Token.jso"n and "unwind_digital_test.py" MUST BE IN THE SAME FOLDER)
+
 2)run the "unwind_digital_test.py"
+
 3)Each Stage of the Script will print message notifying of stage completion
 
 
 Warning!
+
 I could not establish remote connection to PostgreSQL from another machine with another network (Even with help of my Senior Developer friends),
 thus function "create_db_and_add_data" may not work if you don't 
 have established PostgreSQL server with following properties:
