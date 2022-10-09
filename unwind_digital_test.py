@@ -28,12 +28,13 @@ class Table():
         self.auth=self.first_authentification()
 
 
-        periodicity_time=24*(60**2) # 24 hours in seconds
+        # periodicity_time=24*(60**2)
+        periodicity_time=3 # 24 hours in seconds
         while True:
-            time.sleep(periodicity_time)
             self.FLE=self.download_file()
             self.df=self.convert_data()
             self.create_db_and_add_data()
+            time.sleep(periodicity_time)
 
 
     def first_authentification(self):
@@ -63,22 +64,22 @@ class Table():
         print('Initial authentification is done')
 
         try:
-                service = build('drive', 'v3', credentials=creds)
+            service = build('drive', 'v3', credentials=creds)
 
-                # Call the Drive v3 API
-                results = service.files().list(
-                    pageSize=10, fields="nextPageToken, files(id, name)").execute()
-                items = results.get('files', [])
+            # Call the Drive v3 API
+            results = service.files().list(
+                pageSize=10, fields="nextPageToken, files(id, name)").execute()
+            items = results.get('files', [])
 
-                if not items:
-                    print('No files found.')
-                    return
-                print('Files:')
-                for item in items:
-                    print(u'{0} ({1})'.format(item['name'], item['id']))
-            except HttpError as error:
-                # TODO(developer) - Handle errors from drive API.
-                print(f'An error occurred: {error}')
+            if not items:
+                print('No files found.')
+                return
+            print('Files:')
+            for item in items:
+                print(u'{0} ({1})'.format(item['name'], item['id']))
+        except HttpError as error:
+            # TODO(developer) - Handle errors from drive API.
+            print(f'An error occurred: {error}')
 
 
     
@@ -174,7 +175,7 @@ class Table():
                 user='postgres',
                 password='admin',
                 host='localhost',
-                port= '1143'
+                port= '5432'
             )
             conn.autocommit = True
             # Creating a cursor object
