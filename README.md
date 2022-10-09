@@ -18,7 +18,7 @@ have established PostgreSQL server with following properties:
 database="unwind_digital_db",
 user='postgres',
 password='admin',
-host='localhost', #alternative host for different LOCAL machines '192.168.0.108',
+host='localhost',
 port= '5432'
 
 If you have a database with following properties THE CODE DOES WORK and the data will be updated on your local server. 
