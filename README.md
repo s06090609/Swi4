@@ -4,7 +4,7 @@
 
 2)run the "unwind_digital_test.py"
 
-3) If There are expired orders, the notification will be sent in telegram to https://t.me/Expired_orders_bot
+3)If There are expired orders, the notification will be sent in telegram to https://t.me/Expired_orders_bot
 
 4)Each Stage of the Script will print message notifying of stage completion
 
