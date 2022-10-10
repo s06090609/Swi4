@@ -1,6 +1,6 @@
 # Unwind_Digital_test
 
-1)Download and unzip files in your preffered location ( The "Token.json" and "unwind_digital_test.py" MUST BE IN THE SAME FOLDER)
+1)Download and unzip files in your preffered location ( The "token.json" and "unwind_digital_test.py" MUST BE IN THE SAME FOLDER)
 
 2)Create your own DataBase in PostgreSQL with following properties:
 database="unwind_digital_db",
